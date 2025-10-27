@@ -83,7 +83,7 @@ public class FileWatcher {
         try (WatchService ws = FileSystems.getDefault().newWatchService()) {
             inbox.register(ws, ENTRY_CREATE);
             while (running) {
-                WatchKey key = ws.take(); // bloquea hasta que se ingrese un valor
+                WatchKey key = ws.take();
                 for (WatchEvent<?> event : key.pollEvents()) {
                     if (event.kind() == ENTRY_CREATE) {
                         Path created = inbox.resolve((Path) event.context());
