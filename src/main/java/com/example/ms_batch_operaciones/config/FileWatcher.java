@@ -141,7 +141,6 @@ public class FileWatcher {
         return name.endsWith(".csv");
     }
 
-    /** Espera a que el tamaño del archivo quede estable (evita leerlo mientras se está copiando) */
     private static void waitUntilStable(Path p, int checks, long sleepMs) throws IOException, InterruptedException {
         long prev = -1;
         for (int i = 0; i < checks; i++) {

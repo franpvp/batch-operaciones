@@ -13,10 +13,10 @@ public class KafkaTopicsConfig {
   private String topic;
 
   @Bean
-  public NewTopic clientesTopic() {
+  public NewTopic tradeTopic(@Value("${app.kafka.topic}") String topic) {
     return TopicBuilder.name(topic)
-        .partitions(3)
-        .replicas(1)
-        .build();
+            .partitions(3)
+            .replicas(1)
+            .build();
   }
 }

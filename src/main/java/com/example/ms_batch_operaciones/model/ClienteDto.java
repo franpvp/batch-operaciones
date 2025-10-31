@@ -12,8 +12,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ClienteDto {
-  private String id;
+  private String idCliente;
   private String nombre;
+  private String apellido;
   private String correo;
   private Integer edad;
 }
