@@ -19,7 +19,6 @@ import org.springframework.util.backoff.FixedBackOff;
 @Slf4j
 public class KafkaConsumerConfig {
 
-    // Usaremos el ConsumerFactory auto-configurado por Spring Boot (spring.kafka.*)
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
             ConsumerFactory<String, Object> consumerFactory,
@@ -31,7 +30,7 @@ public class KafkaConsumerConfig {
         // Ack manual
         f.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
 
-        // Error handler común (reintentos + DLT)
+        // Error handler
         f.setCommonErrorHandler(errorHandler);
 
         return f;
@@ -53,7 +52,6 @@ public class KafkaConsumerConfig {
         return new DefaultErrorHandler(recoverer, backoff);
     }
 
-    // (Opcional) auto-creación de topics
     @Bean
     public NewTopic operacionesTopic(
             @Value("${app.kafka.topic}") String topic,
