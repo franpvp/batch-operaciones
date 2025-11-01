@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "TRADES")
+@Table(name = "TRADES", schema = "USUARIO_TEST")
 public class TradeEntity {
 
     @Id
@@ -29,6 +29,8 @@ public class TradeEntity {
     private Long idTrade;
     @Column(name = "MONTO")
     private Integer monto;
+    @Column(name = "CANAL")
+    private String canal;
     @Column(name = "FECHA_CREACION")
     private LocalDate fechaCreacion;
     @Column(name = "ID_CLIENTE")

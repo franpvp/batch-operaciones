@@ -1,4 +1,4 @@
-package com.example.ms_batch_operaciones.model;
+package com.example.bff_operaciones.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +15,10 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class TradeDto {
+public class TradeFilter {
 
-    private Long idTrade;
-    private Long monto;
+    private LocalDate fechaDesde;
+    private LocalDate fechaHasta;
     private String canal;
-    private LocalDate fechaCreacion;
-    private Long idCliente;
+    private Long idTrade;
 }

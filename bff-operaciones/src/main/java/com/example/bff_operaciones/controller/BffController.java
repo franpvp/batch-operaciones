@@ -2,7 +2,7 @@ package com.example.bff_operaciones.controller;
 
 import com.example.bff_operaciones.dto.ResponseBodyDto;
 import com.example.bff_operaciones.dto.TradeDto;
-import com.example.bff_operaciones.service.TradesService;
+import com.example.bff_operaciones.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,12 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class BffController {
 
-    private final TradesService tradesService;
+    private final TradeService tradeService;
 
-    @GetMapping
-    public ResponseEntity<ResponseBodyDto> obtenerMensajesOperaciones(){
+    @GetMapping("/trades")
+    public ResponseEntity<ResponseBodyDto> obtenerTrades(){
 
-        List<TradeDto> tradeDtoList = tradesService.obtenerMensajesOperaciones();
+        List<TradeDto> tradeDtoList = tradeService.obtenerTrades();
 
         return new ResponseEntity<>(ResponseBodyDto.builder()
                 .codigo(200)

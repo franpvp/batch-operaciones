@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.Set;
+
 @Slf4j
 @Configuration
 public class CsvToKafkaJobConfig {
@@ -60,16 +62,18 @@ public class CsvToKafkaJobConfig {
                 .encoding("UTF-8")
                 .linesToSkip(1) // header
                 .delimited()
-                .names("idTrade", "monto", "fechaCreacion", "idCliente")
+                .names("idTrade", "monto", "canal", "fechaCreacion", "idCliente")
                 .fieldSetMapper(fs -> {
                     // Parseo explícito para evitar problemas de conversión
                     var idTrade = fs.readLong("idTrade");
                     var monto = fs.readLong("monto");
+                    var canal = fs.readString("canal");
                     var fecha = java.time.LocalDate.parse(fs.readString("fechaCreacion")); // ISO yyyy-MM-dd
                     var idCliente = fs.readLong("idCliente");
                     var t = new TradeDto();
                     t.setIdTrade(idTrade);
                     t.setMonto(monto);
+                    t.setCanal(canal);
                     t.setFechaCreacion(fecha);
                     t.setIdCliente(idCliente);
                     return t;
@@ -78,7 +82,11 @@ public class CsvToKafkaJobConfig {
     }
 
     @Bean
-    public ItemProcessor<TradeDto, TradeDto> tradeProcessor() {
+    public ItemProcessor<TradeDto, TradeDto> tradeProcessor(KafkaTemplate<String, TradeDto> kafkaTemplate) {
+
+        final Set<String> CANALES_VALIDOS = Set.of("BANCO", "DATATEC", "PTO.VENTA", "INTEGRAL");
+        final String DLQ_TOPIC = "operaciones-trade-topic.DLT";
+
         return t -> {
             if (t.getIdTrade() == null) {
                 log.warn("[BATCH] Trade ignorado: idTrade nulo");
@@ -88,6 +96,20 @@ public class CsvToKafkaJobConfig {
                 log.warn("[BATCH] Trade {} ignorado: monto inválido ({})", t.getIdTrade(), t.getMonto());
                 return null;
             }
+            if (t.getCanal() == null) {
+                log.warn("[BATCH] Trade {} ignorado: canal nulo", t.getIdTrade());
+                return null;
+            }
+
+            // ✅ Validación de canal
+            if (!CANALES_VALIDOS.contains(t.getCanal().toUpperCase())) {
+                log.error("[BATCH] Trade {} con canal inválido '{}'. Enviando a DLQ ({})",
+                        t.getIdTrade(), t.getCanal(), DLQ_TOPIC);
+
+                kafkaTemplate.send(DLQ_TOPIC, String.valueOf(t.getIdTrade()), t);
+                return null;
+            }
+
             if (t.getFechaCreacion() == null) {
                 log.warn("[BATCH] Trade {} ignorado: fechaCreacion nula", t.getIdTrade());
                 return null;
@@ -96,6 +118,7 @@ public class CsvToKafkaJobConfig {
                 log.warn("[BATCH] Trade {} ignorado: idCliente nulo", t.getIdTrade());
                 return null;
             }
+
             return t;
         };
     }

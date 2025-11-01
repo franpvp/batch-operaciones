@@ -9,6 +9,7 @@ public final class TradesMapper {
         return TradeDto.builder()
                 .idTrade(tradeEntity.getIdTrade())
                 .monto(tradeEntity.getMonto())
+                .canal(tradeEntity.getCanal())
                 .fechaCreacion(tradeEntity.getFechaCreacion())
                 .idCliente(tradeEntity.getIdCliente())
                 .build();
@@ -18,6 +19,7 @@ public final class TradesMapper {
         return TradeEntity.builder()
                 .idTrade(tradeDto.getIdTrade())
                 .monto(tradeDto.getMonto())
+                .canal(tradeDto.getCanal())
                 .fechaCreacion(tradeDto.getFechaCreacion())
                 .idCliente(tradeDto.getIdCliente())
                 .build();

@@ -20,6 +20,8 @@ public class TradeDto {
     private Long idTrade;
     @JsonProperty("MONTO")
     private Integer monto;
+    @JsonProperty("CANAL")
+    private String canal;
     @JsonProperty("FECHA_CREACION")
     private LocalDate fechaCreacion;
     @JsonProperty("ID_CLIENTE")
